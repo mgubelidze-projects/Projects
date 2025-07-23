@@ -4,3 +4,6 @@ drive.mount('/content/drive')
 -----   import Data ---------
 import pandas as pd
 df = pd.read_csv("winequalityN.csv")
+df.head()
+-----   Check data types ---------
+
