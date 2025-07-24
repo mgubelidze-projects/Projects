@@ -1,22 +1,24 @@
 ------------------------------------------------------------------------------------
 **This is Simple Prediction Model Without advanced Steps**
 ------------------------------------------------------------------------------------
-----------------**Connect to Google Drive**-----------------------------------------
+----------------Connect to Google Drive-----------------------------------------
 from google.colab import drive
 drive.mount('/content/drive')
------------------------**import Data**----------------------------------------------
+-----------------------import Data----------------------------------------------
 import pandas as pd
 df = pd.read_csv("winequalityN.csv")
 df.head()
-----------------**Check Data Type And NULL's**---------------------------------------
+----------------Check Data Type And NULL's---------------------------------------
 df.columns
 df.dtypes
 df.isnull().sum()
 df = df.dropna()  
-----------------------**Simple Encoding**-------------------------------------------
+--or  we have other option instead of drop null rows fill na
+df['ColumnName'].fillna(df['ColumnName'].median(), inplace=True)
+----------------------Simple Encoding-------------------------------------------
 df['quality'] = [1 if x > 5 else 0 for x in df.quality]
 df['type'] = [1 if x == "white" else 0 for x in df.type]
---------------------**Modeling And Accuracy**-----------------------------------------
+--------------------Modeling And Accuracy-----------------------------------------
 X = df.drop('quality', axis=1)
 y = df['quality']
 from sklearn.model_selection import train_test_split
@@ -32,7 +34,53 @@ Accuracy Score: 72.24%
 ------------------------------------------------------------------------------------
 **With Cross Validation**
 ------------------------------------------------------------------------------------
-
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+model=LogisticRegression()
+scores = cross_val_score(model1, X, y, cv=5, scoring='accuracy')
+print("Cross-Validation Scores:", scores)
+print("Mean Accuracy: {:.2f}%".format(np.mean(scores) * 100))
+Cross-Validation Scores: [0.64114462 0.70843001 0.72699149 0.76393189 0.46362229]
+Mean Accuracy: 66.08%
+------------------------------------------------------------------------------------
+**With Scaling**
+------------------------------------------------------------------------------------
+----------------Connect to Google Drive-----------------------------------------
+from google.colab import drive
+drive.mount('/content/drive')
+-----------------------import Data----------------------------------------------
+import pandas as pd
+df = pd.read_csv("winequalityN.csv")
+df.head()
+----------------Check Data Type And NULL's---------------------------------------
+df.columns
+df.dtypes
+df.isnull().sum()
+df = df.dropna()  
+--or  we have other option instead of drop null rows fill na
+df['ColumnName'].fillna(df['ColumnName'].median(), inplace=True)
+df.describe()
+----------------------Simple Encoding-------------------------------------------
+df['quality'] = [1 if x > 5 else 0 for x in df.quality]
+df['type'] = [1 if x == "white" else 0 for x in df.type]
+--------------------Modeling And Accuracy-----------------------------------------
+X = df.drop('quality', axis=1)
+y = df['quality']
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+X_train,X_test,y_train,y_test =train_test_split(X,y,test_size=0.2,random_state=42)
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+model=LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+Accuracy Score: 72.24%
 
 
 
