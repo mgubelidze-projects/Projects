@@ -85,8 +85,55 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 Accuracy: 75.10%
 ------------------------------------------------------------------------------------
-**Ensamble**
+**Ensamble-Voting**
 ------------------------------------------------------------------------------------
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score
+
+# Define classifiers
+clf_1 = LogisticRegression()
+clf_2 = XGBClassifier()
+clf_3 = SVC(probability=True)  # Important if you later use soft voting
+
+# Voting classifier
+voter = VotingClassifier(estimators=[
+    ('lr', clf_1),
+    ('xgb', clf_2),
+    ('svc', clf_3)
+], voting='hard')  # or 'soft' if you prefer probabilities
+
+# Fit individual classifiers
+clf_1.fit(X_train, y_train)
+clf_2.fit(X_train, y_train)
+clf_3.fit(X_train, y_train)
+
+# Fit voting classifier
+voter.fit(X_train, y_train)
+
+# Predictions and accuracy
+models = {'Logistic Regression': clf_1,
+          'XGBoost': clf_2,
+          'SVC': clf_3,
+          'Voting Classifier': voter}
+
+print("🔍 Accuracy Scores:")
+for name, model in models.items():
+    train_pred = model.predict(X_train)
+    test_pred = model.predict(X_test)
+    train_acc = accuracy_score(y_train, train_pred)
+    test_acc = accuracy_score(y_test, test_pred)
+    print(f"{name} - Train: {train_acc:.3f}, Test: {test_acc:.3f}")
+
+🔍 Accuracy Scores:
+Logistic Regression - Train: 0.746, Test: 0.751
+XGBoost - Train: 0.985, Test: 0.803
+SVC - Train: 0.761, Test: 0.759
+Voting Classifier - Train: 0.787, Test: 0.769
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
