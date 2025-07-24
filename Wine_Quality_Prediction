@@ -1,13 +1,49 @@
----------------------------------------------------------
-__This is Simple Prediction Model Without advanced Steps__ 
----------------------------------------------------------
-----------------Connect to Google Drive------------------
+------------------------------------------------------------------------------------
+**This is Simple Prediction Model Without advanced Steps**
+------------------------------------------------------------------------------------
+----------------**Connect to Google Drive**-----------------------------------------
 from google.colab import drive
 drive.mount('/content/drive')
------------------------ import Data-----------------------
+-----------------------**import Data**----------------------------------------------
 import pandas as pd
 df = pd.read_csv("winequalityN.csv")
 df.head()
------   Check data types ---------
+----------------**Check Data Type And NULL's**---------------------------------------
+df.columns
 df.dtypes
+df.isnull().sum()
+df = df.dropna()  
+----------------------**Simple Encoding**-------------------------------------------
+df['quality'] = [1 if x > 5 else 0 for x in df.quality]
+df['type'] = [1 if x == "white" else 0 for x in df.type]
+--------------------**Modeling And Accuracy**-----------------------------------------
+X = df.drop('quality', axis=1)
+y = df['quality']
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+X_train,X_test,y_train,y_test =train_test_split(X,y,test_size=0.2,random_state=42)
+model=LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+Accuracy Score: 72.24%
+------------------------------------------------------------------------------------
+**More Advanced Prediction Model**
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
