@@ -30,7 +30,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 Accuracy Score: 72.24%
 ------------------------------------------------------------------------------------
-**More Advanced Prediction Model**
+**With Cross Validation**
 ------------------------------------------------------------------------------------
 
 
