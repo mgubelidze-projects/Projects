@@ -1,5 +1,5 @@
 ---------------------------------------------------------
-**This is Simple Prediction Model Without advanced Steps** 
+__This is Simple Prediction Model Without advanced Steps__ 
 ---------------------------------------------------------
 ----------------Connect to Google Drive------------------
 from google.colab import drive
