@@ -1,9 +1,13 @@
------- Connect to Google Drive ------
+---------------------------------------------------------
+**This is Simple Prediction Model Without advanced Steps** 
+---------------------------------------------------------
+----------------Connect to Google Drive------------------
 from google.colab import drive
 drive.mount('/content/drive')
------   import Data ---------
+----------------------- import Data-----------------------
 import pandas as pd
 df = pd.read_csv("winequalityN.csv")
 df.head()
 -----   Check data types ---------
+df.dtypes
 
