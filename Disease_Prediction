@@ -1,4 +1,4 @@
-Step 1    ---------------------------------------------------------------------------------
+Step 1 : Import Libraries   --------------------------------------------------------------
 import numpy as np
 import pandas as pd
 from scipy.stats import mode
@@ -10,4 +10,14 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
-----------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+Step 2 :   Import Data    ------------------------------------------------------------------
+from google.colab import drive
+drive.mount('/content/drive')
+df = pd.read_csv("Path")
+--------------------------------------------------------------------------------------------
+Step 3 :   Overview    ---------------------------------------------------------------------
+df.columns
+df.dtypes
+df['disease'].values  >>> Target Column
+
