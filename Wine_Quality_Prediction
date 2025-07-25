@@ -1,5 +1,10 @@
+In these 4 model  we have four different scenarios from Simple to Advanced
+1) This is Simple Prediction Model Without advanced Steps.
+2) Model With Cross Validation.
+3) Model With Scaling (MinMax And Standard)
+4) Voting Classifiers 
 ------------------------------------------------------------------------------------
-**This is Simple Prediction Model Without advanced Steps**
+1) **This is Simple Prediction Model Without advanced Steps**
 ------------------------------------------------------------------------------------
 ----------------Connect to Google Drive-----------------------------------------
 from google.colab import drive
@@ -32,7 +37,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 Accuracy Score: 72.24%
 ------------------------------------------------------------------------------------
-**With Cross Validation**
+2) **With Cross Validation**
 ------------------------------------------------------------------------------------
 import numpy as np
 from sklearn.model_selection import cross_val_score
@@ -44,7 +49,7 @@ print("Mean Accuracy: {:.2f}%".format(np.mean(scores) * 100))
 Cross-Validation Scores: [0.64114462 0.70843001 0.72699149 0.76393189 0.46362229]
 Mean Accuracy: 66.08%
 ------------------------------------------------------------------------------------
-**With Scaling**
+3) **With Scaling**
 ------------------------------------------------------------------------------------
 ----------------Connect to Google Drive-----------------------------------------
 from google.colab import drive
@@ -85,7 +90,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 Accuracy: 75.10%
 ------------------------------------------------------------------------------------
-**Ensamble-Voting**
+4) **Ensamble-Voting**
 ------------------------------------------------------------------------------------
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
