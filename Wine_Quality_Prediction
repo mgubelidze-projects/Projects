@@ -140,6 +140,53 @@ SVC - Train: 0.761, Test: 0.759
 Voting Classifier - Train: 0.787, Test: 0.769
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import MinMaxScaler
+
+# მონაცემების ჩატვირთვა
+df = pd.read_csv(r"D:\2. Personal\DataScience\winequalityN.csv")
+
+# გაუნულებელი სტრიქონების წაშლა
+df = df.dropna()
+
+# კატეგორიული მნიშვნელობების ქულად გადაყვანა
+df['quality'] = [1 if x > 5 else 0 for x in df.quality]
+df['type'] = [1 if x == "white" else 0 for x in df.type]
+
+# ცვლადების გამოყოფა
+X = df.drop('quality', axis=1)
+y = df['quality']
+
+# მონაცემთა გაყოფა სატრენინგოდ და სატესტოდ
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# მასშტაბირება MinMaxScaler-ით
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# მოდელის შექმნა და ტრენინგი
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# პროგნოზირება
+y_pred = model.predict(X_test)
+
+# პროგნოზების DataFrame-ის შექმნა
+X_test_df = pd.DataFrame(X_test, columns=X.columns, index=y_test.index)
+result_df = X_test_df.copy()
+result_df['y_pred'] = y_pred
+result_df['y_true'] = y_test
+
+# შედეგის ჩვენება
+print(result_df.head())
+
+# სურვილის შემთხვევაში შეინახე Excel-ში
+# result_df.to_excel("wine_predictions.xlsx", index=False)
+
+
 
 
 
