@@ -158,8 +158,81 @@ print("Model 3 Prediction (GB):", pred3)
 # -----------------------
 final_pred = mode([pred1, pred2, pred3], keepdims=False)[0]
 print("\nFinal chosen prediction (majority vote):", final_pred)
+--------------------------------------------------------------------------------------------
+Step 11 :   Grid Search for Each Model    ----------------------------------------------------
+We can further fine tune this model to make predictions more accurate.
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
+# Logistic Regression hyperparameters to tune
+param_grid_lr = {
+    'C': [0.01, 0.1, 1, 10, 100],        # inverse regularization strength
+    'penalty': ['l2'],                    # 'l1' requires solver='liblinear' (can add if needed)
+    'solver': ['lbfgs'],
+    'max_iter': [1000]
+}
 
+# Random Forest hyperparameters to tune
+param_grid_rf = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 5, 10, 20],
+    'min_samples_split': [2, 5, 10]
+}
+
+# Gradient Boosting hyperparameters to tune
+param_grid_gb = {
+    'n_estimators': [50, 100, 200],
+    'learning_rate': [0.01, 0.1, 0.2],
+    'max_depth': [3, 5, 7]
+}
+
+# Initialize models
+clf1 = LogisticRegression(random_state=42)
+clf2 = RandomForestClassifier(random_state=42)
+clf3 = GradientBoostingClassifier(random_state=42)
+
+# GridSearchCV objects with 5-fold CV
+grid_lr = GridSearchCV(clf1, param_grid_lr, cv=5, scoring='accuracy', n_jobs=-1)
+grid_rf = GridSearchCV(clf2, param_grid_rf, cv=5, scoring='accuracy', n_jobs=-1)
+grid_gb = GridSearchCV(clf3, param_grid_gb, cv=5, scoring='accuracy', n_jobs=-1)
+
+# Fit on training data (replace X_train, y_train with your data)
+grid_lr.fit(X_train, y_train)
+grid_rf.fit(X_train, y_train)
+grid_gb.fit(X_train, y_train)
+
+# Best parameters
+print("Best Logistic Regression params:", grid_lr.best_params_)
+print("Best Random Forest params:", grid_rf.best_params_)
+print("Best Gradient Boosting params:", grid_gb.best_params_)
+
+# Best scores
+print("Best Logistic Regression CV accuracy:", grid_lr.best_score_)
+print("Best Random Forest CV accuracy:", grid_rf.best_score_)
+print("Best Gradient Boosting CV accuracy:", grid_gb.best_score_)
+## Best Estimators
+best_lr = grid_lr.best_estimator_
+best_rf = grid_rf.best_estimator_
+best_gb = grid_gb.best_estimator_
+
+# Example prediction on new data
+new_data = pd.DataFrame([{
+    'fever': 1,
+    'headache': 0,
+    'nausea': 1,
+    'vomiting': 0,
+    'fatigue': 1,
+    'joint_pain': 0,
+    'skin_rash': 0,
+    'cough': 1,
+    'weight_loss': 0,
+    'yellow_eyes': 1
+}])
+
+print("Predicted by best Logistic Regression:", best_lr.predict(new_data)[0])
+print("Predicted by best Random Forest:", best_rf.predict(new_data)[0])
+print("Predicted by best Gradient Boosting:", best_gb.predict(new_data)[0])
 
 
 
