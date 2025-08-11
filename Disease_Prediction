@@ -8,7 +8,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 --------------------------------------------------------------------------------------------
 Step 2 :   Import Data    ------------------------------------------------------------------
@@ -91,6 +92,72 @@ for name, model in models.items():
     print(f"{name} - Train: {train_acc:.3f}, Test: {test_acc:.3f}")
 --------------------------------------------------------------------------------------------
 Step 8 :   Cross Validation    -------------------------------------------------------------
+clf1 = LogisticRegression()
+clf2 = RandomForestClassifier()
+clf3 = GradientBoostingClassifier()
+# Combine with voting
+voting_clf = VotingClassifier(
+    estimators=[('lr', clf1), ('rf', clf2), ('gb', clf3)],
+    voting='soft'  # soft = use predicted probabilities, hard = majority vote
+)
+
+# Cross-validation on the combined model
+scores = cross_val_score(voting_clf, X, y, cv=5)
+print("VotingClassifier CV scores:", scores)
+print("Mean score:", scores.mean())
+💡 Key takeaway:
+cross_val_score() is only for evaluation — it doesn’t store trained models for later use.
+If you want to predict on new data afterward, 
+you must train the models again (or load from saved files) before predicting.
+--------------------------------------------------------------------------------------------
+Step 9 :   train (fit)    ------------------------------------------------------------------
+# Final training on full training set
+# -----------------------
+clf1.fit(X_train, y_train)
+clf2.fit(X_train, y_train)
+clf3.fit(X_train, y_train)
+ -----------------------
+# Evaluate on hold-out test set
+# -----------------------
+test_score1 = clf1.score(X_test, y_test)
+test_score2 = clf2.score(X_test, y_test)
+test_score3 = clf3.score(X_test, y_test)
+print("\nTest set accuracy:")
+print(f"Model 1 (LR): {test_score1:.2f}")
+print(f"Model 2 (RF): {test_score2:.2f}")
+print(f"Model 3 (GB): {test_score3:.2f}")
+--------------------------------------------------------------------------------------------
+Step 10 :   Prediction Enter New_Data    ----------------------------------------------------
+# -----------------------
+# Predict for new patient
+# -----------------------
+new_data = pd.DataFrame([{
+    'fever': 1,
+    'headache': 0,
+    'nausea': 1,
+    'vomiting': 0,
+    'fatigue': 1,
+    'joint_pain': 0,
+    'skin_rash': 0,
+    'cough': 1,
+    'weight_loss': 0,
+    'yellow_eyes': 1
+}])
+
+pred1 = clf1.predict(new_data)[0]
+pred2 = clf2.predict(new_data)[0]
+pred3 = clf3.predict(new_data)[0]
+
+print("\nPredictions for new patient:")
+print("Model 1 Prediction (LR):", pred1)
+print("Model 2 Prediction (RF):", pred2)
+print("Model 3 Prediction (GB):", pred3)
+
+# -----------------------
+# Majority voting manually
+# -----------------------
+final_pred = mode([pred1, pred2, pred3], keepdims=False)[0]
+print("\nFinal chosen prediction (majority vote):", final_pred)
 
 
 
