@@ -1,5 +1,180 @@
+#-----------Variance 1-------------------------------------------------------------------------#
 import pandas as pd
-import numpy as np
-from sklearn import preprocessing
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+#------------------------------------------------------------------#
+from google.colab import drive
+drive.mount('/content/drive')
+#------------------------------------------------------------------#
+df = pd.read_csv("/path")
+#------------------------------------------------------------------#
+df=df.drop('Loan_ID',axis=1)
+X = df.drop("Loan_Status", axis=1)  # Features
+y = df["Loan_Status"]               # Target
+#------------------------------------------------------------------#
+# კატეგორიკული და რიცხვითი სვეტების გამოყოფა
+cat_cols = X.select_dtypes(include=['object']).columns
+num_cols = X.select_dtypes(exclude=['object']).columns
+#------------------------------------------------------------------#
+# კატეგორიკული Pipeline
+cat_pipeline = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),  # Null შევსება ყველაზე ხშირი მნიშვნელობით
+    ('encoder', OneHotEncoder(handle_unknown='ignore'))    # OneHotEncoding
+])
+#------------------------------------------------------------------#
+# რიცხვითი Pipeline
+num_pipeline = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),  # Null შევსება საშუალოთი
+    ('scaler', MinMaxScaler())                    # MinMax Scaling
+])
+#------------------------------------------------------------------#
+# ColumnTransformer - გაერთიანება
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', cat_pipeline, cat_cols),
+        ('num', num_pipeline, num_cols)
+    ]
+)
+#------------------------------------------------------------------#
+# სრული Pipeline
+pipe = Pipeline(steps=[
+    ('preprocessing', preprocessor),
+    ('model', LogisticRegression(max_iter=1000))
+])
+#------------------------------------------------------------------#
+# Train/Test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Fit
+pipe.fit(X_train, y_train)
+
+# Accuracy
+print("Accuracy:", pipe.score(X_test, y_test))
+#------------------------------------------------------------------#
+import pandas as pd
+
+# ახალი მონაცემები (ფორმატი უნდა ემთხვეოდეს X-ის სვეტებს)
+new_data = pd.DataFrame([{
+    'Gender': 'Male',
+    'Married': 'Yes',
+    'Dependents': '0',
+    'Education': 'Graduate',
+    'Self_Employed': 'No',
+    'ApplicantIncome': 5000,
+    'CoapplicantIncome': 1500,
+    'LoanAmount': 150,
+    'Loan_Amount_Term': 360,
+    'Credit_History': 1.0,
+    'Property_Area': 'Urban'
+}])
+
+# პროგნოზი
+prediction = pipe.predict(new_data)
+#-----------Variance 2-------------------------------------------------------------------------#
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.compose import ColumnTransformer
+from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline  # imblearn-ის Pipeline
+#------------------------------------------------------------------#
+data = pd.read_csv("path")
+#------------------------------------------------------------------#
+data=data.drop('Loan_ID',axis=1)
+# მონაცემები
+X = data.drop("Loan_Status", axis=1)
+y = data["Loan_Status"]
+#------------------------------------------------------------------#
+# სვეტების გამოყოფა
+cat_cols = X.select_dtypes(include=['object']).columns
+num_cols = X.select_dtypes(exclude=['object']).columns
+#------------------------------------------------------------------#
+# კატეგორიკული Pipeline
+categorical_pipeline = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+])
+#------------------------------------------------------------------#
+# რიცხვითი Pipeline
+numerical_pipeline = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', MinMaxScaler())
+])
+#------------------------------------------------------------------#
+# ColumnTransformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_pipeline, cat_cols),
+        ('num', numerical_pipeline, num_cols)
+    ]
+)
+#------------------------------------------------------------------#
+# სრული Pipeline SMOTE-ით
+pipe = Pipeline(steps=[
+    ('preprocessing', preprocessor),
+    ('smote', SMOTE(random_state=42)),          # Oversampling
+    ('model', LogisticRegression(max_iter=1000))
+])
+
+#------------------------------------------------------------------#
+# Train/Test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Fit
+pipe.fit(X_train, y_train)
+
+print("Accuracy:", pipe.score(X_test, y_test))
+#------------------------------------------------------------------#
+import pandas as pd
+
+# ახალი მონაცემები (ფორმატი უნდა ემთხვეოდეს X-ის სვეტებს)
+new_data = pd.DataFrame([{
+    'Gender': 'Male',
+    'Married': 'Yes',
+    'Dependents': '0',
+    'Education': 'Graduate',
+    'Self_Employed': 'No',
+    'ApplicantIncome': 5000,
+    'CoapplicantIncome': 1500,
+    'LoanAmount': 150,
+    'Loan_Amount_Term': 360,
+    'Credit_History': 1.0,
+    'Property_Area': 'Urban'
+}])
+
+# პროგნოზი
+prediction = pipe.predict(new_data)
+print("Prediction:", prediction[0])
+
+#------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
