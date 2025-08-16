@@ -1,0 +1,75 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sb
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn import metrics
+from sklearn.svm import SVC
+from xgboost import XGBRegressor
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.ensemble import RandomForestRegressor
+
+import warnings
+warnings.filterwarnings('ignore')
+#--------------------------------------------------------------------------#
+from google.colab import drive
+drive.mount('/content/drive')
+df = pd.read_csv("Path.csv")
+df.head()
+#--------------------------------------------------------------------------#
+df.shape
+df.info()
+#-------------------------Data Cleaning------------------------------------#
+to_remove = []
+for col in df.columns:
+
+    # Removing columns having only one value.
+    if df[col].nunique() == 1:
+        to_remove.append(col)
+
+    # Removing columns with more than 90% of the
+    # rows as null values.
+    elif (df[col].isnull()).mean() > 0.60:
+        to_remove.append(col)
+
+print(len(to_remove))
+
+df.drop(to_remove,
+        axis=1,
+        inplace=True)
+#--------------------------------------------------------------------------#
+df.isnull().sum().plot.bar()
+plt.show()
+
+for col in df.columns:
+    if df[col].dtype == 'object':
+        df[col] = df[col].fillna(df[col].mode()[0])
+    elif df[col].dtype == np.number:
+        df[col] = df[col].fillna(df[col].mean())
+
+df.isnull().sum().sum()
+#---------------Exploratory Data Analysis---------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
