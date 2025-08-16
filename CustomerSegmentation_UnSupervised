@@ -1,0 +1,23 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sb
+
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.cluster import KMeans
+
+import warnings
+warnings.filterwarnings('ignore')
+#------------------------------------------------------------------#
+from google.colab import drive
+drive.mount('/content/drive')
+df = pd.read_csv("/path")
+#------------------------------------------------------------------#
+df.info()
+df.shape
+df.describe().T
+#---------------------Null-----------------------------------------#
+for col in df.columns:
+    temp = df[col].isnull().sum()
+    if temp > 0:
+        print(f'Column {col} contains {temp} null values.')
